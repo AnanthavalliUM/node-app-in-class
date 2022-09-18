@@ -2,14 +2,13 @@ import express, { response } from "express";
 import { MongoClient } from "mongodb";
 import * as dotenv from 'dotenv'
 const app = express()
-const port = 4000
+const PORT = process.env.PORT;
 dotenv.config()
 
 
 
 // const MONGO_URL = "mongodb://127.0.0.1";  //--LOCAL HOST number
 const MONGO_URL = process.env.MONGO_URL;
-// const MONGO_URL ="mongodb+srv://valli:welcome@123@cluster0.md1noof.mongodb.net";
 async function createConnection() 
 {
   const client = new MongoClient(MONGO_URL); // phone dailawait 
@@ -161,4 +160,4 @@ app.put("/movies/:id", async function (request,response) {
 
 
 
-app.listen(port, () => console.log(`The server started in: ${port}`)) 
+app.listen(PORT, () => console.log(`The server started in: ${PORT}`)) 
