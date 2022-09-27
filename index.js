@@ -1,7 +1,10 @@
 import express, { response } from "express";
 import { MongoClient } from "mongodb";
 import * as dotenv from 'dotenv';
-dotenv.config()
+import { moviesRouter } from "./routes/movies.js"; //want to mention movies.js (.js)in node app
+import { usersRouter } from "./routes/users.js"; //want to mention movie.js in node app
+
+dotenv.config();
 
 const app = express()
 const PORT = process.env.PORT;
@@ -17,7 +20,7 @@ async function createConnection()
   console.log("Mongo is connected ✨🎊😎");
   return client;
 }
-  const client = await createConnection();
+  export const client = await createConnection();
    
   app.use(express.json());
 
@@ -113,52 +116,12 @@ const movies = [
 // });
   
 //code to get movies by id through mongo db
-app.get('/movies/:id', async function(req, res){
-    const {id} = req.params;     //destructing
-    // const movie = movies.filter((mv) => mv.id === id )  // filter always give array
+app.use("/movies", moviesRouter);
 
-    const movie = await client.db("b33we").collection("movies").findOne({id: id})
-    // const movie = movies.find((mv) => mv.id === id )  // to get array of objects we can use find & find always give element
-    movie ? res.send(movie) : res.status(400).send({msg : "Movie not found"})
-    console.log(movie)
-});
-
-// app.get('/movies/:id', function(req, res){
-//     const {name} = req.params;     //destructing
-//     const movie = movies.filter((mv) => mv.name === name )  // to get array of objects we can use find & find always give element
-    
-// Create movies through mongo db we use post method and choose body and raw and json format in postman
-
-    app.post("/movies", async function (req, res) {
-      const movies = req.body;
-      console.log(movies);
-      const result = await client.db("b33we").collection("movies").insertMany(movies);
-      res.send(result)
-});
-
-  //to get all movies through mongodb
-  app.get("/movies", async function (request, response) {
-    console.log(request.query);
-    const { name } = request.query;
-    const movies = await client.db("b33we").collection("movies").find({}).toArray(); //to convert cursor to Array
-  response.send(movies);
-  }); 
-
-app.delete("/movies/:id", async function (request,response) {
-  console.log(request.query);
-  const { id } = request.params;
-  const deletemovies = await client.db("b33we").collection("movies").deleteOne({id: id});
-  response.send(deletemovies); 
-});
-
-app.put("/movies/:id", async function (request,response) {
-  const { id } = request.params;
-  const data = request.body;
-  const updatemovies = await client.db("b33we").collection("movies").updateOne({id: id} , { $set: data });
-  response.send(updatemovies); 
-});
-  
+app.use("/users", usersRouter);
 
 
 
-app.listen(PORT, () => console.log(`The server started in: ${PORT}`)) 
+
+app.listen(PORT, () => console.log(`The server started in: ${PORT}`));
+
